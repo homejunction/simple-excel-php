@@ -64,20 +64,18 @@ class CSVParser extends BaseParser implements IParser
 		$line = $lines[0];
 		if (!isset($this->delimiter)) {
 			// do guess work
-			$separators = array(';' => 0, ',' => 0);
+			$separators = array(';' => 0, ',' => 0, '|' => 0);
 			foreach ($separators as $sep => $count) {
-				$args  = str_getcsv($sep, $line);
+				$args  = str_getcsv($line, $sep);
 				$count = count($args);
-				
+
 				$separators[$sep] = $count;
 			}
-			
-			$sep = ',';
-			if (($separators[';'] > $separators[','])) {
-				$sep = ';';
-			}
-			
-			$this->delimiter = $sep;
+
+			arsort($separators);
+			$separators = array_keys($separators);
+
+			$this->delimiter = $separators[0];
 		}
 		
 		// 3. Parse the lines into rows,cols
